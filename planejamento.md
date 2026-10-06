@@ -9,7 +9,7 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓
 ✅ FASE 1 — Interface de linha de comando
       ↓
-FASE 2 — Codificação do domínio ──────────┐
+✅ FASE 2 — Codificação do domínio ────────┐
       ↓                                    │
 FASE 3 — Construção do Header DNS          │  podem existir
       ↓                                    │  trabalhos em paralelo
@@ -125,7 +125,7 @@ captura corretamente ambos os valores.
 
 ---
 
-# Fase 2 — Codificar o domínio em formato DNS
+# Fase 2 — Codificar o domínio em formato DNS ✅
 
 Aqui começa o protocolo.
 
@@ -863,9 +863,9 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
 - [x] **Checkpoint 1**
   - programa compila;
   - argumentos funcionam.
-- [ ] **Checkpoint 2**
-  - QNAME correto;
-  - header correto.
+- [ ] **Checkpoint 2 — Em andamento**
+  - [x] QNAME correto;
+  - [ ] header correto.
 - [ ] **Checkpoint 3** — pacote DNS completo correto.
 - [ ] **Checkpoint 4**
   - UDP envia;

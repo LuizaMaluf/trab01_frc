@@ -11,6 +11,7 @@
 #define DNS_TYPE_MX     15
 #define DNS_CLASS_IN    1
 #define DNS_MAX_NAME    256
+#define DNS_MAX_WIRE_NAME 255
 #define DNS_MAX_MX      16
 
 typedef enum {
@@ -27,6 +28,11 @@ typedef struct {
 } mx_record_t;
 
 /* ---------- query.c (Pessoa 1) ----------
+ * Converte "unb.br" para 03 'u' 'n' 'b' 02 'b' 'r' 00.
+ * Retorna o tamanho codificado ou -1 se o dominio for invalido ou nao couber. */
+int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen);
+
+/*
  * Monta header (12 bytes) + question (QNAME, QTYPE=MX, QCLASS=IN) em buf.
  * Retorna o tamanho da mensagem ou -1 em erro. */
 int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id);
