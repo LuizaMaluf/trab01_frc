@@ -25,6 +25,12 @@ TODO (compilador e versão, editor, ferramentas de teste: dig, Wireshark)
 make
 ```
 
+## Como testar
+
+```sh
+make test
+```
+
 ## Como executar
 
 ```sh

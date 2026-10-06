@@ -8,6 +8,12 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    const char *domain = argv[1];
+    const char *server_ip = argv[2];
+
+    printf("Dominio: %s\n", domain);
+    printf("Servidor DNS: %s\n", server_ip);
+
     /* TODO (Pessoa 4):
      * 1. gerar ID aleatorio de 16 bits
      * 2. build_query

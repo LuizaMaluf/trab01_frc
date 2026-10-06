@@ -15,4 +15,7 @@ $(TARGET): $(OBJS)
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-.PHONY: all clean
+test: $(TARGET)
+	sh tests/test_cli.sh ./$(TARGET)
+
+.PHONY: all clean test
