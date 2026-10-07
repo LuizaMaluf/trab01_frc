@@ -38,6 +38,26 @@ static void check_query(const char *description, const char *domain, uint16_t id
     printf("PASSOU: %s\n", description);
 }
 
+static void check_exact_buffer(const char *domain, uint16_t id,
+                               const uint8_t *expected, size_t expected_len)
+{
+    uint8_t buffer[DNS_MAX_MSG + 1];
+    int result;
+
+    memset(buffer, 0xAA, sizeof(buffer));
+    result = build_query(buffer, expected_len, domain, id);
+
+    if (result != (int)expected_len ||
+        memcmp(buffer, expected, expected_len) != 0 ||
+        buffer[expected_len] != 0xAA) {
+        fprintf(stderr, "FALHOU: buffer com tamanho exato para %s\n", domain);
+        failures++;
+        return;
+    }
+
+    printf("PASSOU: buffer com tamanho exato para %s\n", domain);
+}
+
 static void check_small_buffer(const char *description, const char *domain,
                                size_t buffer_size)
 {
@@ -107,9 +127,11 @@ int main(void)
                 "unb.br", 0x1234, unb_br, sizeof(unb_br));
     check_query("consulta MX para mail.google.com (id 0xBEEF)",
                 "mail.google.com", 0xBEEF, mail_google_com, sizeof(mail_google_com));
+    check_exact_buffer("unb.br", 0x1234, unb_br, sizeof(unb_br));
 
     /* (c) buffer de 20 bytes: header (12) + QNAME (8) cabem, QTYPE/QCLASS nao */
     check_small_buffer("buffer de 20 bytes para unb.br", "unb.br", 20);
+    check_small_buffer("buffer um byte menor que a consulta", "unb.br", sizeof(unb_br) - 1);
     check_small_buffer("buffer menor que o header", "unb.br", 11);
 
     /* (d) dominio invalido */

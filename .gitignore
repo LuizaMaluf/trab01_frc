@@ -1,3 +1,6 @@
 *.o
 meu_cliente
+tests/test_dns_name
+tests/test_dns_query
+tests/test_udp
 *.zip

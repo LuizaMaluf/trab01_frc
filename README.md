@@ -31,6 +31,10 @@ make
 make test
 ```
 
+O teste da Fase 5 troca uma consulta e uma resposta UDP em `127.0.0.1`,
+usando uma porta local escolhida pelo sistema. Ele não depende de um
+servidor DNS externo.
+
 ## Como executar
 
 ```sh

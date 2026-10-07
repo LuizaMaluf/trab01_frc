@@ -11,11 +11,11 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓
 ✅ FASE 2 — Codificação do domínio ────────┐
       ↓                                    │
-FASE 3 — Construção do Header DNS          │  podem existir
+✅ FASE 3 — Construção do Header DNS        │  podem existir
       ↓                                    │  trabalhos em paralelo
-FASE 4 — Montagem do pacote completo ──────┘
+✅ FASE 4 — Montagem do pacote completo ───┘
       ↓
-FASE 5 — Socket UDP + envio
+✅ FASE 5 — Socket UDP + envio
       ↓
 FASE 6 — Timeout + retransmissão
       ↓
@@ -187,7 +187,7 @@ Ainda **não é necessário utilizar socket**.
 
 ---
 
-# Fase 3 — Construir apenas o Header DNS
+# Fase 3 — Construir apenas o Header DNS ✅
 
 Essa fase pode ser desenvolvida **em paralelo com a Fase 2**.
 
@@ -256,7 +256,7 @@ As fases 2 e 3 são praticamente independentes e podem ser executadas em paralel
 
 ---
 
-# Fase 4 — Construir a Question e o pacote completo
+# Fase 4 — Construir a Question e o pacote completo ✅
 
 Nesta fase, reunir:
 
@@ -339,7 +339,7 @@ feat: build DNS MX query
 
 ---
 
-# Fase 5 — Criar o socket UDP
+# Fase 5 — Criar o socket UDP ✅
 
 Agora a rede entra.
 
@@ -863,13 +863,13 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
 - [x] **Checkpoint 1**
   - programa compila;
   - argumentos funcionam.
-- [ ] **Checkpoint 2 — Em andamento**
+- [x] **Checkpoint 2**
   - [x] QNAME correto;
-  - [ ] header correto.
-- [ ] **Checkpoint 3** — pacote DNS completo correto.
-- [ ] **Checkpoint 4**
-  - UDP envia;
-  - UDP recebe.
+  - [x] header correto.
+- [x] **Checkpoint 3** — pacote DNS completo correto.
+- [x] **Checkpoint 4 — Verificado em localhost**
+  - [x] UDP envia;
+  - [x] UDP recebe.
 - [ ] **Checkpoint 5** — timeout e três tentativas.
 - [ ] **Checkpoint 6** — header da resposta interpretado.
 - [ ] **Checkpoint 7** — nomes DNS decodificados.

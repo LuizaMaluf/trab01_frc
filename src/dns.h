@@ -38,11 +38,16 @@ int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen);
 int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id);
 
 /* ---------- net.c (Pessoa 2) ----------
- * Envia a query via UDP para server_ip:53, espera DNS_TIMEOUT_SEC,
- * tenta ate DNS_MAX_TRIES vezes e descarta respostas com ID diferente.
- * Retorna o tamanho da resposta ou -1 se nao houve resposta. */
+ * Envia uma consulta UDP para server_ip:53 e recebe uma resposta.
+ * Faz uma tentativa com espera limitada; retransmissoes pertencem a Fase 6.
+ * Retorna o tamanho da resposta ou -1 em erro/ausencia de resposta. */
 int send_and_receive(const char *server_ip, const uint8_t *query, size_t qlen,
                      uint8_t *resp, size_t resplen, uint16_t id);
+
+/* Mesmo transporte com porta configuravel para testes locais. */
+int send_and_receive_to(const char *server_ip, uint16_t port,
+                        const uint8_t *query, size_t qlen,
+                        uint8_t *resp, size_t resplen, uint16_t id);
 
 /* ---------- parse.c (Pessoa 3) ----------
  * Le um nome a partir de msg[offset], seguindo ponteiros de compressao (0xC0).
