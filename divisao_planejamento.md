@@ -8,7 +8,7 @@ O desenvolvimento será dividido entre duas pessoas, alternando períodos de tra
 | **Paralelo 1** | **Fase 2** — codificação do domínio ✅ | **Fase 3** — Header DNS ✅ | ✅ Concluído |
 | **Integração 1** | **Fase 4** — Query completa | **Fase 4** — Query completa | ✅ Concluído — pacote revisado e incluído em `make test` |
 | **Paralelo 2** | **Fase 5** — Socket UDP ✅ | **Fase 7** — Parser do Header usando dados de teste | 🟡 Em andamento — UDP verificado em localhost |
-| **Paralelo 3** | **Fase 6** — timeout e retransmissão | **Fases 8–9** — RCODE + `read_dns_name()` | ⬜ Pendente |
+| **Paralelo 3** | **Fase 6** — timeout e retransmissão ✅ | **Fases 8–9** — RCODE + `read_dns_name()` | 🟡 Em andamento — três tentativas verificadas em localhost |
 | **Paralelo 4** | Testar e estabilizar **Fases 5–6** | **Fases 10–11** — Resource Records + MX | ⬜ Pendente |
 | **Integração 2** | **Fase 12** — conectar comunicação + parser | **Fase 12** — conectar comunicação + parser | ⬜ Pendente |
 | **Validação** | **Fase 13** | **Fase 13** | ⬜ Pendente |

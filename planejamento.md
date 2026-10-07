@@ -17,7 +17,7 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓
 ✅ FASE 5 — Socket UDP + envio
       ↓
-FASE 6 — Timeout + retransmissão
+✅ FASE 6 — Timeout + retransmissão
       ↓
 FASE 7 — Parser do Header da resposta ─────┐
       ↓                                     │
@@ -400,7 +400,7 @@ resposta voltou
 
 ---
 
-# Fase 6 — Timeout e três tentativas
+# Fase 6 — Timeout e três tentativas ✅
 
 O trabalho exige:
 
@@ -870,7 +870,7 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
 - [x] **Checkpoint 4 — Verificado em localhost**
   - [x] UDP envia;
   - [x] UDP recebe.
-- [ ] **Checkpoint 5** — timeout e três tentativas.
+- [x] **Checkpoint 5** — timeout e três tentativas verificados em localhost.
 - [ ] **Checkpoint 6** — header da resposta interpretado.
 - [ ] **Checkpoint 7** — nomes DNS decodificados.
 - [ ] **Checkpoint 8** — registros DNS percorridos.

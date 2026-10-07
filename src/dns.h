@@ -39,7 +39,7 @@ int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id);
 
 /* ---------- net.c (Pessoa 2) ----------
  * Envia uma consulta UDP para server_ip:53 e recebe uma resposta.
- * Faz uma tentativa com espera limitada; retransmissoes pertencem a Fase 6.
+ * Aguarda ate DNS_TIMEOUT_SEC por tentativa e faz ate DNS_MAX_TRIES envios.
  * Retorna o tamanho da resposta ou -1 em erro/ausencia de resposta. */
 int send_and_receive(const char *server_ip, const uint8_t *query, size_t qlen,
                      uint8_t *resp, size_t resplen, uint16_t id);

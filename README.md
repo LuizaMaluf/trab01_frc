@@ -35,6 +35,19 @@ O teste da Fase 5 troca uma consulta e uma resposta UDP em `127.0.0.1`,
 usando uma porta local escolhida pelo sistema. Ele não depende de um
 servidor DNS externo.
 
+O teste da Fase 6 verifica a espera de dois segundos, a retransmissão
+e o limite de três tentativas com esse mesmo tipo de servidor local.
+
+Para observar uma consulta real e os bytes retornados por um servidor DNS:
+
+```sh
+make tests/dns_live
+./tests/dns_live unb.br 8.8.8.8
+```
+
+Esse comando imprime a consulta e a resposta em hexadecimal. A interpretação
+dos registros MX será adicionada nas fases de parsing.
+
 ## Como executar
 
 ```sh
