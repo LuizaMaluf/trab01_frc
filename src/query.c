@@ -57,13 +57,50 @@ int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen)
     return (int)output_pos;
 }
 
+/* Layout do header DNS (RFC 1035 4.1.1) com os valores fixados pelo enunciado.
+ * Constantes locais a query.c ate que a inclusao em dns.h seja acordada (T004). */
+#define DNS_HEADER_LEN     12
+#define DNS_FLAGS_QUERY    0x0100  /* QR=0, OPCODE=0, RD=1 */
+#define DNS_QUESTION_TAIL  4       /* QTYPE (2) + QCLASS (2) */
+
+/* Grava um inteiro de 16 bits em network byte order (big-endian). */
+static void put_u16(uint8_t *buf, uint16_t value)
+{
+    buf[0] = (uint8_t)(value >> 8);
+    buf[1] = (uint8_t)(value & 0xFF);
+}
+
 int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id)
 {
-    /* TODO (Pessoa 1):
-     * - header: ID, flags 0x0100, QDCOUNT 1, AN/NS/ARCOUNT 0 (network byte order)
-     * - QNAME: "unb.br" -> 03 'u' 'n' 'b' 02 'b' 'r' 00
-     * - QTYPE = DNS_TYPE_MX, QCLASS = DNS_CLASS_IN
-     * - checar buflen e rotulos > 63 bytes */
-    (void)buf; (void)buflen; (void)domain; (void)id;
-    return -1;
+    int name_len;
+    size_t offset;
+
+    if (buf == NULL || domain == NULL || buflen < DNS_HEADER_LEN) {
+        return -1;
+    }
+
+    /* QNAME vai logo apos o header; encode_dns_name respeita o espaco restante. */
+    name_len = encode_dns_name(domain, buf + DNS_HEADER_LEN, buflen - DNS_HEADER_LEN);
+    if (name_len < 0) {
+        return -1;
+    }
+
+    offset = DNS_HEADER_LEN + (size_t)name_len;
+    if (buflen - offset < DNS_QUESTION_TAIL) {
+        return -1;
+    }
+
+    /* Header: ID, flags, QDCOUNT=1, ANCOUNT/NSCOUNT/ARCOUNT=0. */
+    put_u16(buf + 0, id);
+    put_u16(buf + 2, DNS_FLAGS_QUERY);
+    put_u16(buf + 4, 1);
+    put_u16(buf + 6, 0);
+    put_u16(buf + 8, 0);
+    put_u16(buf + 10, 0);
+
+    /* Question: QNAME ja gravado; QTYPE = MX, QCLASS = IN. */
+    put_u16(buf + offset, DNS_TYPE_MX);
+    put_u16(buf + offset + 2, DNS_CLASS_IN);
+
+    return (int)(offset + DNS_QUESTION_TAIL);
 }

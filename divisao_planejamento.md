@@ -5,8 +5,8 @@ O desenvolvimento será dividido entre duas pessoas, alternando períodos de tra
 | Momento | Pessoa A | Pessoa B | Situação |
 |---|---|---|---|
 | **Base** | **Fase 0–1** — projeto e argumentos | **Fase 0–1** — projeto e testes | ✅ Concluído |
-| **Paralelo 1** | **Fase 2** — codificação do domínio ✅ | **Fase 3** — Header DNS | 🟡 Em andamento |
-| **Integração 1** | **Fase 4** — Query completa | **Fase 4** — Query completa | ⬜ Pendente |
+| **Paralelo 1** | **Fase 2** — codificação do domínio ✅ | **Fase 3** — Header DNS ✅ | ✅ Concluído |
+| **Integração 1** | **Fase 4** — Query completa | **Fase 4** — Query completa | 🟡 Em andamento — pacote completo implementado e testado (`tests/test_dns_query.c`); falta revisão conjunta e commit |
 | **Paralelo 2** | **Fase 5** — Socket UDP | **Fase 7** — Parser do Header usando dados de teste | ⬜ Pendente |
 | **Paralelo 3** | **Fase 6** — timeout e retransmissão | **Fases 8–9** — RCODE + `read_dns_name()` | ⬜ Pendente |
 | **Paralelo 4** | Testar e estabilizar **Fases 5–6** | **Fases 10–11** — Resource Records + MX | ⬜ Pendente |
