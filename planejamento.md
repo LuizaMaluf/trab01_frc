@@ -29,7 +29,7 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓                                        │
 ✅ FASE 11 — Extrair o MX ─────────────────────┘
       ↓
-FASE 12 — Diferenciar "não existe" de "não possui MX"
+✅ FASE 12 — Diferenciar "não existe" de "não possui MX"
       ↓
 FASE 13 — Teste de integração completo
       ↓
@@ -677,7 +677,7 @@ Esse formato é exigido explicitamente. trabalho_01_2026.02
 
 ---
 
-# Fase 12 — Diferenciar “não existe” de “não possui MX”
+# Fase 12 — Diferenciar “não existe” de “não possui MX” ✅
 
 Isso é importante porque são casos diferentes.
 

@@ -10,7 +10,7 @@ O desenvolvimento será dividido entre duas pessoas, alternando períodos de tra
 | **Paralelo 2** | **Fase 5** — Socket UDP ✅ | **Fase 7** — Parser do Header usando dados de teste ✅ | ✅ Concluído |
 | **Paralelo 3** | **Fase 6** — timeout e retransmissão ✅ | **Fases 8–9** — RCODE ✅ + `read_dns_name()` ✅ | ✅ Concluído |
 | **Paralelo 4** | Testar e estabilizar **Fases 5–6** | **Fases 10–11** — Resource Records ✅ + MX ✅ | ✅ Concluído — falta só estabilizar a rede (Pessoa A) |
-| **Integração 2** | **Fase 12** — conectar comunicação + parser | **Fase 12** — conectar comunicação + parser | ⬜ Pendente |
+| **Integração 2** | **Fase 12** — conectar comunicação + parser | **Fase 12** — conectar comunicação + parser | ✅ Concluído — `run_client` liga rede e parser; `./meu_cliente` já imprime o resultado |
 | **Validação** | **Fase 13** | **Fase 13** | ⬜ Pendente |
 | **Final** | **Fase 14** — revisão do código | **Fase 15** — finalizar documentação | ⬜ Pendente |
 | **Entrega** | Revisão cruzada | Revisão cruzada | ⬜ Pendente |

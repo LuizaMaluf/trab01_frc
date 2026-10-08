@@ -38,6 +38,12 @@ servidor DNS externo.
 O teste da Fase 6 verifica a espera de dois segundos, a retransmissão
 e o limite de três tentativas com esse mesmo tipo de servidor local.
 
+O teste da Fase 12 (`tests/test_client.c`) roda o cliente completo contra um
+servidor DNS falso em `127.0.0.1` e confere a saída de cada cenário: MX
+encontrado, domínio inexistente, domínio sem MX, servidor que não responde,
+erros do servidor e resposta inválida. Ele leva cerca de 6 segundos por causa
+do cenário de timeout.
+
 Para observar uma consulta real e os bytes retornados por um servidor DNS:
 
 ```sh
@@ -45,8 +51,8 @@ make tests/dns_live
 ./tests/dns_live unb.br 8.8.8.8
 ```
 
-Esse comando imprime a consulta e a resposta em hexadecimal. A interpretação
-dos registros MX será adicionada nas fases de parsing.
+Esse comando imprime a consulta e a resposta em hexadecimal, seguidas dos
+registros encontrados e dos MX extraídos.
 
 ## Como executar
 

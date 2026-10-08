@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define DNS_PORT        53
 #define DNS_MAX_MSG     512   /* limite de mensagem DNS sobre UDP (RFC 1035 4.2.1) */
@@ -121,5 +122,17 @@ int parse_answers(const uint8_t *msg, size_t msglen,
  * answers e extrai os registros MX (TYPE 15) em mx[0..*count-1]. */
 dns_status_t parse_response(const uint8_t *resp, size_t len,
                             mx_record_t *mx, int max_mx, int *count);
+
+/* ---------- client.c (Fase 12) ----------
+ * Orquestra a consulta: gera o ID aleatorio, monta a query, envia a server_ip:port,
+ * interpreta a resposta e escreve o resultado em out, no formato do enunciado:
+ *   MX encontrado   -> "dominio <> servidor" (uma linha por MX)
+ *   NXDOMAIN        -> "Dominio X nao encontrado"
+ *   sem MX          -> "Dominio X nao possui entrada MX"
+ *   sem resposta ou resposta invalida -> "Nao foi possível coletar entrada MX para X"
+ *   nome de dominio invalido          -> "Dominio X invalido"
+ * A porta e parametro para os testes usarem um servidor local; main usa DNS_PORT.
+ * Retorna 0 se imprimiu ao menos um MX e 1 em qualquer outro resultado. */
+int run_client(FILE *out, const char *domain, const char *server_ip, uint16_t port);
 
 #endif

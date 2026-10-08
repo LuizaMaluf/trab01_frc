@@ -1,7 +1,7 @@
 CC      = gcc
 CFLAGS  = -Wall -Wextra -std=c11 -O2
 TARGET  = meu_cliente
-SRCS    = src/main.c src/query.c src/net.c src/parse.c
+SRCS    = src/main.c src/client.c src/query.c src/net.c src/parse.c
 OBJS    = $(SRCS:.c=.o)
 TEST_DNS_NAME = tests/test_dns_name
 TEST_DNS_QUERY = tests/test_dns_query
@@ -9,6 +9,7 @@ TEST_UDP = tests/test_udp
 TEST_UDP_RETRIES = tests/test_udp_retries
 DEMO_DNS_LIVE = tests/dns_live
 TEST_DNS_PARSE = tests/test_dns_parse
+TEST_CLIENT = tests/test_client
 
 all: $(TARGET)
 
@@ -19,7 +20,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_UDP) $(TEST_UDP_RETRIES) $(DEMO_DNS_LIVE) $(TEST_DNS_PARSE)
+	rm -f $(OBJS) $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_UDP) $(TEST_UDP_RETRIES) $(DEMO_DNS_LIVE) $(TEST_DNS_PARSE) $(TEST_CLIENT)
 
 $(TEST_DNS_NAME): tests/test_dns_name.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_dns_name.c src/query.c
@@ -36,15 +37,19 @@ $(TEST_UDP): tests/test_udp.c src/net.c src/query.c src/dns.h
 $(TEST_UDP_RETRIES): tests/test_udp_retries.c src/net.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_udp_retries.c src/net.c src/query.c
 
+$(TEST_CLIENT): tests/test_client.c src/client.c src/net.c src/query.c src/parse.c src/dns.h
+	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_client.c src/client.c src/net.c src/query.c src/parse.c
+
 $(DEMO_DNS_LIVE): tests/dns_live.c src/net.c src/query.c src/parse.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/dns_live.c src/net.c src/query.c src/parse.c
 
-test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_DNS_PARSE) $(TEST_UDP) $(TEST_UDP_RETRIES)
+test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_DNS_PARSE) $(TEST_UDP) $(TEST_UDP_RETRIES) $(TEST_CLIENT)
 	sh tests/test_cli.sh ./$(TARGET)
 	./$(TEST_DNS_NAME)
 	./$(TEST_DNS_QUERY)
 	./$(TEST_DNS_PARSE)
 	./$(TEST_UDP)
 	./$(TEST_UDP_RETRIES)
+	./$(TEST_CLIENT)
 
 .PHONY: all clean test

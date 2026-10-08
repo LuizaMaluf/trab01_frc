@@ -10,10 +10,13 @@ fail()
     exit 1
 }
 
-expected_valid='Dominio: unb.br
-Servidor DNS: 8.8.8.8'
-actual=$("$program" unb.br 8.8.8.8) || fail 'execucao com argumentos validos'
-[ "$actual" = "$expected_valid" ] || fail 'saida dos argumentos validos'
+# Servidor DNS com IP invalido: a consulta falha antes de usar a rede, e o
+# programa so imprime o resultado (sem eco dos argumentos).
+if actual=$("$program" unb.br IP-invalido); then
+    fail 'IP de servidor invalido terminou com sucesso'
+fi
+[ "$actual" = 'Nao foi possível coletar entrada MX para unb.br' ] ||
+    fail 'mensagem para servidor invalido'
 
 check_invalid()
 {

@@ -5,6 +5,7 @@ tests/test_dns_query
 tests/test_dns_parse
 tests/test_udp
 tests/test_udp_retries
+tests/test_client
 tests/dns_live
 *.zip
 .claude
