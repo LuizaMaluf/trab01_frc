@@ -2,7 +2,11 @@
 meu_cliente
 tests/test_dns_name
 tests/test_dns_query
+tests/test_dns_parse
 tests/test_udp
 tests/test_udp_retries
 tests/dns_live
 *.zip
+.claude
+.specify
+.specs

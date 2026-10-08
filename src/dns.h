@@ -13,6 +13,13 @@
 #define DNS_MAX_NAME    256
 #define DNS_MAX_WIRE_NAME 255
 #define DNS_MAX_MX      16
+#define DNS_HEADER_LEN  12    /* tamanho fixo do header (RFC 1035 4.1.1) */
+
+/* Campos das flags do header: QR (bit 15) e RCODE (bits 0-3). */
+#define DNS_FLAG_QR(flags)  (((flags) >> 15) & 0x1)
+#define DNS_RCODE(flags)    ((flags) & 0x000F)
+#define DNS_RCODE_OK        0     /* sem erro */
+#define DNS_RCODE_NXDOMAIN  3     /* nome nao existe */
 
 typedef enum {
     DNS_OK = 0,
@@ -26,6 +33,16 @@ typedef struct {
     uint16_t preference;
     char exchange[DNS_MAX_NAME];
 } mx_record_t;
+
+/* Header de 12 bytes de uma mensagem DNS, ja convertido de network byte order. */
+typedef struct {
+    uint16_t id;
+    uint16_t flags;     /* QR | OPCODE | AA | TC | RD | RA | Z | RCODE */
+    uint16_t qdcount;
+    uint16_t ancount;
+    uint16_t nscount;
+    uint16_t arcount;
+} dns_header_t;
 
 /* ---------- query.c (Pessoa 1) ----------
  * Converte "unb.br" para 03 'u' 'n' 'b' 02 'b' 'r' 00.
@@ -50,6 +67,12 @@ int send_and_receive_to(const char *server_ip, uint16_t port,
                         uint8_t *resp, size_t resplen, uint16_t id);
 
 /* ---------- parse.c (Pessoa 3) ----------
+ * Le os DNS_HEADER_LEN primeiros bytes de msg em *hdr (Fase 7).
+ * Nao valida QR nem RCODE; isso e feito por parse_response.
+ * Retorna 0 ou -1 se msg for nulo ou msglen < DNS_HEADER_LEN. */
+int parse_header(const uint8_t *msg, size_t msglen, dns_header_t *hdr);
+
+/*
  * Le um nome a partir de msg[offset], seguindo ponteiros de compressao (0xC0).
  * Escreve o nome em formato "a.b.c" em out.
  * Retorna quantos bytes o nome ocupa na posicao ORIGINAL (para avancar o cursor),

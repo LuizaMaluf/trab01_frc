@@ -19,17 +19,23 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓
 ✅ FASE 6 — Timeout + retransmissão
       ↓
-FASE 7 — Parser do Header da resposta ─────┐
-      ↓                                     │
-FASE 8 — Parser dos registros DNS           │ paralelo parcial
-      ↓                                     │
-FASE 9 — Extração do MX ────────────────────┘
+✅ FASE 7 — Interpretar o header da resposta ──┐
+      ↓                                        │
+✅ FASE 8 — Detectar domínio inexistente       │
+      ↓                                        │  parser desenvolvido
+✅ FASE 9 — Ler nomes DNS (com compressão)     │  com respostas de teste,
+      ↓                                        │  sem depender da rede
+FASE 10 — Percorrer os Resource Records        │
+      ↓                                        │
+FASE 11 — Extrair o MX ────────────────────────┘
       ↓
-FASE 10 — Tratamento dos erros
+FASE 12 — Diferenciar "não existe" de "não possui MX"
       ↓
-FASE 11 — Integração e testes
+FASE 13 — Teste de integração completo
       ↓
-FASE 12 — Documentação e entrega
+FASE 14 — Limpeza do código
+      ↓
+FASE 15 — Documentação
 ```
 
 Como o trabalho dá 100% da pontuação para **C ou Rust**, 95% para C++/Go e 90% para linguagens interpretadas/Java, a linguagem recomendada é **C**, especialmente porque o exercício envolve bytes, sockets e protocolo. trabalho_01_2026.02
@@ -457,7 +463,7 @@ O desenvolvimento da comunicação de rede deve contemplar `socket` UDP, `sendto
 
 ---
 
-# Fase 7 — Interpretar o header da resposta
+# Fase 7 — Interpretar o header da resposta ✅
 
 Não extrair o MX imediatamente.
 
@@ -505,7 +511,7 @@ Se forem diferentes, a resposta não corresponde à sua consulta.
 
 ---
 
-# Fase 8 — Detectar domínio inexistente
+# Fase 8 — Detectar domínio inexistente ✅
 
 Antes mesmo de procurar MX, interpretar as flags da resposta.
 
@@ -539,7 +545,7 @@ Assim, evita-se misturar erro DNS com ausência de MX.
 
 ---
 
-# Fase 9 — Criar uma função para ler nomes DNS
+# Fase 9 — Criar uma função para ler nomes DNS ✅
 
 Essa merece uma fase própria.
 
@@ -871,8 +877,8 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
   - [x] UDP envia;
   - [x] UDP recebe.
 - [x] **Checkpoint 5** — timeout e três tentativas verificados em localhost.
-- [ ] **Checkpoint 6** — header da resposta interpretado.
-- [ ] **Checkpoint 7** — nomes DNS decodificados.
+- [x] **Checkpoint 6** — header da resposta interpretado.
+- [x] **Checkpoint 7** — nomes DNS decodificados.
 - [ ] **Checkpoint 8** — registros DNS percorridos.
 - [ ] **Checkpoint 9** — MX extraído.
 - [ ] **Checkpoint 10** — todos os quatro casos do enunciado passam.

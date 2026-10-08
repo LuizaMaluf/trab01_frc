@@ -8,6 +8,7 @@ TEST_DNS_QUERY = tests/test_dns_query
 TEST_UDP = tests/test_udp
 TEST_UDP_RETRIES = tests/test_udp_retries
 DEMO_DNS_LIVE = tests/dns_live
+TEST_DNS_PARSE = tests/test_dns_parse
 
 all: $(TARGET)
 
@@ -18,13 +19,16 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_UDP) $(TEST_UDP_RETRIES) $(DEMO_DNS_LIVE)
+	rm -f $(OBJS) $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_UDP) $(TEST_UDP_RETRIES) $(DEMO_DNS_LIVE) $(TEST_DNS_PARSE)
 
 $(TEST_DNS_NAME): tests/test_dns_name.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_dns_name.c src/query.c
 
 $(TEST_DNS_QUERY): tests/test_dns_query.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_dns_query.c src/query.c
+
+$(TEST_DNS_PARSE): tests/test_dns_parse.c src/parse.c src/query.c src/dns.h
+	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_dns_parse.c src/parse.c src/query.c
 
 $(TEST_UDP): tests/test_udp.c src/net.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_udp.c src/net.c src/query.c
@@ -35,10 +39,11 @@ $(TEST_UDP_RETRIES): tests/test_udp_retries.c src/net.c src/query.c src/dns.h
 $(DEMO_DNS_LIVE): tests/dns_live.c src/net.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/dns_live.c src/net.c src/query.c
 
-test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_UDP) $(TEST_UDP_RETRIES)
+test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_DNS_PARSE) $(TEST_UDP) $(TEST_UDP_RETRIES)
 	sh tests/test_cli.sh ./$(TARGET)
 	./$(TEST_DNS_NAME)
 	./$(TEST_DNS_QUERY)
+	./$(TEST_DNS_PARSE)
 	./$(TEST_UDP)
 	./$(TEST_UDP_RETRIES)
 

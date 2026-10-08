@@ -57,9 +57,8 @@ int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen)
     return (int)output_pos;
 }
 
-/* Layout do header DNS (RFC 1035 4.1.1) com os valores fixados pelo enunciado.
+/* Valores do header fixados pelo enunciado (DNS_HEADER_LEN vem de dns.h).
  * Constantes locais a query.c ate que a inclusao em dns.h seja acordada (T004). */
-#define DNS_HEADER_LEN     12
 #define DNS_FLAGS_QUERY    0x0100  /* QR=0, OPCODE=0, RD=1 */
 #define DNS_QUESTION_TAIL  4       /* QTYPE (2) + QCLASS (2) */
 
