@@ -36,8 +36,8 @@ $(TEST_UDP): tests/test_udp.c src/net.c src/query.c src/dns.h
 $(TEST_UDP_RETRIES): tests/test_udp_retries.c src/net.c src/query.c src/dns.h
 	$(CC) $(CFLAGS) -Isrc -o $@ tests/test_udp_retries.c src/net.c src/query.c
 
-$(DEMO_DNS_LIVE): tests/dns_live.c src/net.c src/query.c src/dns.h
-	$(CC) $(CFLAGS) -Isrc -o $@ tests/dns_live.c src/net.c src/query.c
+$(DEMO_DNS_LIVE): tests/dns_live.c src/net.c src/query.c src/parse.c src/dns.h
+	$(CC) $(CFLAGS) -Isrc -o $@ tests/dns_live.c src/net.c src/query.c src/parse.c
 
 test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_DNS_PARSE) $(TEST_UDP) $(TEST_UDP_RETRIES)
 	sh tests/test_cli.sh ./$(TARGET)

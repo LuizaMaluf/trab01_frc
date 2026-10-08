@@ -14,6 +14,9 @@
 #define DNS_MAX_WIRE_NAME 255
 #define DNS_MAX_MX      16
 #define DNS_HEADER_LEN  12    /* tamanho fixo do header (RFC 1035 4.1.1) */
+#define DNS_QUESTION_FIXED_LEN 4   /* QTYPE + QCLASS, depois do nome (RFC 1035 4.1.2) */
+#define DNS_RR_FIXED_LEN       10  /* TYPE + CLASS + TTL + RDLENGTH, depois do nome (RFC 1035 4.1.3) */
+#define DNS_MAX_RR      32    /* registros de resposta guardados por parse_answers */
 
 /* Campos das flags do header: QR (bit 15) e RCODE (bits 0-3). */
 #define DNS_FLAG_QR(flags)  (((flags) >> 15) & 0x1)
@@ -43,6 +46,18 @@ typedef struct {
     uint16_t nscount;
     uint16_t arcount;
 } dns_header_t;
+
+/* Um Resource Record da secao de respostas (Fase 10), sem o nome nem o RDATA.
+ * O RDATA nao e copiado: rdata_offset aponta para onde ele comeca na mensagem,
+ * porque os nomes dentro dele podem usar ponteiros de compressao e so
+ * fazem sentido junto com a mensagem inteira. */
+typedef struct {
+    uint16_t type;          /* 15 = MX */
+    uint16_t rrclass;       /* 1 = IN ("class" e palavra reservada em C++) */
+    uint32_t ttl;           /* segundos que a resposta pode ficar em cache */
+    uint16_t rdlength;      /* tamanho do RDATA em bytes */
+    size_t   rdata_offset;  /* posicao do RDATA dentro da mensagem */
+} dns_rr_t;
 
 /* ---------- query.c (Pessoa 1) ----------
  * Converte "unb.br" para 03 'u' 'n' 'b' 02 'b' 'r' 00.
@@ -79,6 +94,28 @@ int parse_header(const uint8_t *msg, size_t msglen, dns_header_t *hdr);
  * ou -1 em erro. */
 int read_name(const uint8_t *msg, size_t msglen, size_t offset,
               char *out, size_t outlen);
+
+/*
+ * Pula as qdcount questions que comecam em msg[offset] (cada uma: nome + 4 bytes).
+ * Retorna o offset logo depois da ultima question (onde comeca a secao de
+ * respostas) ou -1 se alguma estiver truncada ou com nome invalido. */
+int skip_questions(const uint8_t *msg, size_t msglen, size_t offset, uint16_t qdcount);
+
+/*
+ * Le o Resource Record que comeca em msg[offset] (Fase 10):
+ * NAME + TYPE + CLASS + TTL + RDLENGTH + RDATA. Preenche *rr, sem copiar o RDATA.
+ * Retorna quantos bytes o registro inteiro ocupa (para avancar o cursor para o
+ * proximo) ou -1 se ele nao couber na mensagem. */
+int parse_rr(const uint8_t *msg, size_t msglen, size_t offset, dns_rr_t *rr);
+
+/*
+ * Percorre a secao de respostas da mensagem (Fase 10): header, questions e
+ * ANCOUNT registros. Guarda ate max_rrs registros em rrs[0..*count-1] e valida
+ * a estrutura de todos, mesmo os que nao cabem em rrs.
+ * Retorna 0 ou -1 se a mensagem estiver truncada ou malformada.
+ * Nao olha o RCODE: isso e feito por parse_response. */
+int parse_answers(const uint8_t *msg, size_t msglen,
+                  dns_rr_t *rrs, int max_rrs, int *count);
 
 /* Interpreta a resposta: verifica RCODE, pula a question, percorre as
  * answers e extrai os registros MX (TYPE 15) em mx[0..*count-1]. */

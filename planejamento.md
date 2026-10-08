@@ -25,9 +25,9 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓                                        │  parser desenvolvido
 ✅ FASE 9 — Ler nomes DNS (com compressão)     │  com respostas de teste,
       ↓                                        │  sem depender da rede
-FASE 10 — Percorrer os Resource Records        │
+✅ FASE 10 — Percorrer os Resource Records     │
       ↓                                        │
-FASE 11 — Extrair o MX ────────────────────────┘
+✅ FASE 11 — Extrair o MX ─────────────────────┘
       ↓
 FASE 12 — Diferenciar "não existe" de "não possui MX"
       ↓
@@ -600,7 +600,7 @@ Praticamente todo o parser depende dessa função.
 
 ---
 
-# Fase 10 — Percorrer os Resource Records
+# Fase 10 — Percorrer os Resource Records ✅
 
 Nesta fase, processar as respostas propriamente ditas.
 
@@ -639,7 +639,7 @@ TYPE = 15
 
 ---
 
-# Fase 11 — Extrair o MX
+# Fase 11 — Extrair o MX ✅
 
 Agora sim.
 
@@ -879,8 +879,8 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
 - [x] **Checkpoint 5** — timeout e três tentativas verificados em localhost.
 - [x] **Checkpoint 6** — header da resposta interpretado.
 - [x] **Checkpoint 7** — nomes DNS decodificados.
-- [ ] **Checkpoint 8** — registros DNS percorridos.
-- [ ] **Checkpoint 9** — MX extraído.
+- [x] **Checkpoint 8** — registros DNS percorridos (`parse_answers`, testado com resposta real do 8.8.8.8).
+- [x] **Checkpoint 9** — MX extraído (`parse_response` devolve preference + exchange; testado com respostas reais do 8.8.8.8).
 - [ ] **Checkpoint 10** — todos os quatro casos do enunciado passam.
 
 Não iniciar pela implementação integral do cliente DNS. A sequência deve começar com `unb.br → 03 unb 02 br 00`, seguir para o header, a montagem do pacote, o envio, o recebimento dos bytes e, por fim, a interpretação da resposta.
