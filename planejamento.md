@@ -31,9 +31,9 @@ O objetivo final é um programa que receba `domínio + IP do servidor DNS`, cons
       ↓
 ✅ FASE 12 — Diferenciar "não existe" de "não possui MX"
       ↓
-FASE 13 — Teste de integração completo
+✅ FASE 13 — Teste de integração completo
       ↓
-FASE 14 — Limpeza do código
+✅ FASE 14 — Limpeza do código
       ↓
 FASE 15 — Documentação
 ```
@@ -724,7 +724,7 @@ resposta DNS
 
 ---
 
-# Fase 13 — Teste de integração completo
+# Fase 13 — Teste de integração completo ✅
 
 Nesta fase, substituir os testes isolados pelos quatro cenários fornecidos no enunciado.
 
@@ -780,7 +780,7 @@ São justamente os cenários fornecidos no trabalho. trabalho_01_2026.02
 
 ---
 
-# Fase 14 — Limpeza do código
+# Fase 14 — Limpeza do código ✅
 
 Só depois de tudo funcionando.
 
@@ -806,7 +806,28 @@ read_dns_name()
 parse_mx_records()
 ```
 
+Os nomes finais das funções no código são:
+
+| Planejado | Implementado |
+|---|---|
+| `encode_dns_name()` | `encode_dns_name()` |
+| `build_dns_query()` | `build_query()` |
+| `send_dns_query()` / `receive_dns_response()` | `send_and_receive_to()` + `wait_for_response()` |
+| `parse_dns_header()` | `parse_header()` |
+| `read_dns_name()` | `read_name()` |
+| `parse_mx_records()` | `parse_answers()` + `parse_mx_rdata()`, chamadas por `parse_response()` |
+
 Adicionar validações de limites do buffer, pois há manipulação direta de bytes.
+
+### Verificações feitas na limpeza
+
+- Nenhuma saída de depuração em `src/`: só as mensagens oficiais do programa.
+- Compilação sem warnings com `-Wall -Wextra`, e também com `-Wpedantic -Wshadow
+  -Wconversion -Wsign-conversion`, no clang (macOS) e no gcc 13 (Linux).
+- `make test` com AddressSanitizer e UndefinedBehaviorSanitizer, nos dois sistemas.
+- Fuzzing do parser e do montador de consulta com AddressSanitizer: milhões de
+  respostas corrompidas, truncadas e aleatórias, sem leitura ou escrita fora dos
+  limites. O fuzzer detecta a remoção das checagens de limite do código.
 
 ---
 
@@ -881,7 +902,7 @@ O desenvolvimento deve ocorrer em **blocos pequenos → integração → teste �
 - [x] **Checkpoint 7** — nomes DNS decodificados.
 - [x] **Checkpoint 8** — registros DNS percorridos (`parse_answers`, testado com resposta real do 8.8.8.8).
 - [x] **Checkpoint 9** — MX extraído (`parse_response` devolve preference + exchange; testado com respostas reais do 8.8.8.8).
-- [ ] **Checkpoint 10** — todos os quatro casos do enunciado passam.
+- [x] **Checkpoint 10** — todos os quatro casos do enunciado passam (`make integration`, verificado em macOS e em Linux com gcc 13).
 
 Não iniciar pela implementação integral do cliente DNS. A sequência deve começar com `unb.br → 03 unb 02 br 00`, seguir para o header, a montagem do pacote, o envio, o recebimento dos bytes e, por fim, a interpretação da resposta.
 

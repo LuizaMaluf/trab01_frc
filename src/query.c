@@ -57,10 +57,8 @@ int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen)
     return (int)output_pos;
 }
 
-/* Valores do header fixados pelo enunciado (DNS_HEADER_LEN vem de dns.h).
- * Constantes locais a query.c ate que a inclusao em dns.h seja acordada (T004). */
+/* Flags da consulta fixadas pelo enunciado. */
 #define DNS_FLAGS_QUERY    0x0100  /* QR=0, OPCODE=0, RD=1 */
-#define DNS_QUESTION_TAIL  4       /* QTYPE (2) + QCLASS (2) */
 
 /* Grava um inteiro de 16 bits em network byte order (big-endian). */
 static void put_u16(uint8_t *buf, uint16_t value)
@@ -85,7 +83,7 @@ int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id)
     }
 
     offset = DNS_HEADER_LEN + (size_t)name_len;
-    if (buflen - offset < DNS_QUESTION_TAIL) {
+    if (buflen - offset < DNS_QUESTION_FIXED_LEN) {
         return -1;
     }
 
@@ -101,5 +99,5 @@ int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id)
     put_u16(buf + offset, DNS_TYPE_MX);
     put_u16(buf + offset + 2, DNS_CLASS_IN);
 
-    return (int)(offset + DNS_QUESTION_TAIL);
+    return (int)(offset + DNS_QUESTION_FIXED_LEN);
 }

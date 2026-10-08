@@ -60,7 +60,7 @@ typedef struct {
     size_t   rdata_offset;  /* posicao do RDATA dentro da mensagem */
 } dns_rr_t;
 
-/* ---------- query.c (Pessoa 1) ----------
+/* ---------- query.c: montagem da consulta ----------
  * Converte "unb.br" para 03 'u' 'n' 'b' 02 'b' 'r' 00.
  * Retorna o tamanho codificado ou -1 se o dominio for invalido ou nao couber. */
 int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen);
@@ -70,7 +70,7 @@ int encode_dns_name(const char *domain, uint8_t *buf, size_t buflen);
  * Retorna o tamanho da mensagem ou -1 em erro. */
 int build_query(uint8_t *buf, size_t buflen, const char *domain, uint16_t id);
 
-/* ---------- net.c (Pessoa 2) ----------
+/* ---------- net.c: transporte UDP ----------
  * Envia uma consulta UDP para server_ip:53 e recebe uma resposta.
  * Aguarda ate DNS_TIMEOUT_SEC por tentativa e faz ate DNS_MAX_TRIES envios.
  * Retorna o tamanho da resposta ou -1 em erro/ausencia de resposta. */
@@ -82,7 +82,7 @@ int send_and_receive_to(const char *server_ip, uint16_t port,
                         const uint8_t *query, size_t qlen,
                         uint8_t *resp, size_t resplen, uint16_t id);
 
-/* ---------- parse.c (Pessoa 3) ----------
+/* ---------- parse.c: interpretacao da resposta ----------
  * Le os DNS_HEADER_LEN primeiros bytes de msg em *hdr (Fase 7).
  * Nao valida QR nem RCODE; isso e feito por parse_response.
  * Retorna 0 ou -1 se msg for nulo ou msglen < DNS_HEADER_LEN. */
@@ -123,7 +123,7 @@ int parse_answers(const uint8_t *msg, size_t msglen,
 dns_status_t parse_response(const uint8_t *resp, size_t len,
                             mx_record_t *mx, int max_mx, int *count);
 
-/* ---------- client.c (Fase 12) ----------
+/* ---------- client.c: orquestracao e saida ----------
  * Orquestra a consulta: gera o ID aleatorio, monta a query, envia a server_ip:port,
  * interpreta a resposta e escreve o resultado em out, no formato do enunciado:
  *   MX encontrado   -> "dominio <> servidor" (uma linha por MX)

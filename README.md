@@ -44,6 +44,14 @@ encontrado, domínio inexistente, domínio sem MX, servidor que não responde,
 erros do servidor e resposta inválida. Ele leva cerca de 6 segundos por causa
 do cenário de timeout.
 
+O teste da Fase 13 roda os quatro cenários do enunciado contra servidores DNS
+reais (8.8.8.8 e 1.1.1.1) e, por isso, precisa de internet com acesso à porta
+UDP 53. Ele não faz parte de `make test`:
+
+```sh
+make integration
+```
+
 Para observar uma consulta real e os bytes retornados por um servidor DNS:
 
 ```sh

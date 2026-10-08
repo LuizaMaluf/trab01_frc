@@ -52,4 +52,8 @@ test: $(TARGET) $(TEST_DNS_NAME) $(TEST_DNS_QUERY) $(TEST_DNS_PARSE) $(TEST_UDP)
 	./$(TEST_UDP_RETRIES)
 	./$(TEST_CLIENT)
 
-.PHONY: all clean test
+# Fase 13: cenarios do enunciado contra servidores DNS reais (precisa de internet).
+integration: $(TARGET)
+	sh tests/test_integration.sh ./$(TARGET)
+
+.PHONY: all clean test integration

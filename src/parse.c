@@ -249,7 +249,7 @@ static int parse_mx_rdata(const uint8_t *msg, size_t msglen, const dns_rr_t *rr,
 
     /* O nome, na posicao original, tem que terminar dentro do RDATA: senao o
      * RDLENGTH mente sobre onde o registro acaba. */
-    if ((size_t)name_len > rr->rdlength - MX_PREFERENCE_LEN) {
+    if ((size_t)name_len > (size_t)rr->rdlength - MX_PREFERENCE_LEN) {
         return -1;
     }
 

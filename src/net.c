@@ -21,18 +21,82 @@ static int64_t monotonic_ms(void)
     return (int64_t)now.tv_sec * 1000 + now.tv_nsec / 1000000;
 }
 
+/* Resultados de wait_for_response quando nao ha resposta valida (um retorno
+ * positivo e o tamanho da resposta). */
+#define WAIT_TIMEOUT 0
+#define WAIT_ERROR   (-1)
+
+/* A resposta e valida se veio do servidor consultado (IP e porta) e repete o
+ * Transaction ID da consulta; qualquer outro datagrama e ignorado. */
+static int is_expected_reply(const struct sockaddr_in *source,
+                             const struct sockaddr_in *server,
+                             const uint8_t *resp, ssize_t received, uint16_t id)
+{
+    return received >= 2 &&
+           source->sin_family == AF_INET &&
+           source->sin_port == server->sin_port &&
+           source->sin_addr.s_addr == server->sin_addr.s_addr &&
+           resp[0] == (uint8_t)(id >> 8) && resp[1] == (uint8_t)id;
+}
+
+/* Espera ate deadline (relogio monotonico, em ms) pela resposta do servidor.
+ * Retorna o tamanho da resposta, WAIT_TIMEOUT ou WAIT_ERROR. */
+static int wait_for_response(int fd, const struct sockaddr_in *server, uint16_t id,
+                             uint8_t *resp, size_t resplen, int64_t deadline)
+{
+    struct pollfd pending = { .fd = fd, .events = POLLIN };
+
+    for (;;) {
+        struct sockaddr_in source = {0};
+        socklen_t source_len = sizeof(source);
+        int64_t now = monotonic_ms();
+        int64_t remaining;
+        ssize_t received;
+        int ready;
+
+        if (now < 0) {
+            return WAIT_ERROR;
+        }
+        remaining = deadline - now;
+        if (remaining <= 0) {
+            return WAIT_TIMEOUT;
+        }
+
+        ready = poll(&pending, 1, (int)remaining);
+        if (ready == 0) {
+            return WAIT_TIMEOUT;
+        }
+        if (ready < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return WAIT_ERROR;
+        }
+        if ((pending.revents & POLLIN) == 0) {
+            return WAIT_ERROR;
+        }
+
+        received = recvfrom(fd, resp, resplen, 0,
+                            (struct sockaddr *)&source, &source_len);
+        if (received < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            return WAIT_ERROR;
+        }
+
+        if (is_expected_reply(&source, server, resp, received, id)) {
+            return (int)received;
+        }
+    }
+}
+
 int send_and_receive_to(const char *server_ip, uint16_t port,
                         const uint8_t *query, size_t qlen,
                         uint8_t *resp, size_t resplen, uint16_t id)
 {
     struct sockaddr_in destination = {0};
-    struct sockaddr_in source = {0};
-    struct pollfd pending = { .events = POLLIN };
-    socklen_t source_len;
-    ssize_t sent;
-    ssize_t received;
-    int64_t deadline;
-    int64_t remaining;
+    int result = -1;
     int fd;
 
     if (server_ip == NULL || query == NULL || resp == NULL || port == 0 ||
@@ -51,72 +115,30 @@ int send_and_receive_to(const char *server_ip, uint16_t port,
         return -1;
     }
 
-    pending.fd = fd;
+    /* Ate DNS_MAX_TRIES envios, cada um com DNS_TIMEOUT_SEC de espera. Um erro
+     * (que nao seja timeout) encerra as tentativas. */
     for (int attempt = 0; attempt < DNS_MAX_TRIES; attempt++) {
-        sent = sendto(fd, query, qlen, 0,
-                      (const struct sockaddr *)&destination, sizeof(destination));
-        if (sent != (ssize_t)qlen) {
-            close(fd);
-            return -1;
+        int64_t deadline = monotonic_ms();
+        int got;
+
+        if (sendto(fd, query, qlen, 0, (const struct sockaddr *)&destination,
+                   sizeof(destination)) != (ssize_t)qlen || deadline < 0) {
+            break;
         }
 
-        deadline = monotonic_ms();
-        if (deadline < 0) {
-            close(fd);
-            return -1;
+        got = wait_for_response(fd, &destination, id, resp, resplen,
+                                deadline + DNS_TIMEOUT_SEC * 1000);
+        if (got > 0) {
+            result = got;
+            break;
         }
-        deadline += DNS_TIMEOUT_SEC * 1000;
-
-        for (;;) {
-            int64_t now = monotonic_ms();
-            if (now < 0) {
-                close(fd);
-                return -1;
-            }
-            remaining = deadline - now;
-            if (remaining <= 0) {
-                break;
-            }
-
-            int ready = poll(&pending, 1, (int)remaining);
-            if (ready == 0) {
-                break;
-            }
-            if (ready < 0) {
-                if (errno == EINTR) {
-                    continue;
-                }
-                close(fd);
-                return -1;
-            }
-            if ((pending.revents & POLLIN) == 0) {
-                close(fd);
-                return -1;
-            }
-
-            source_len = sizeof(source);
-            received = recvfrom(fd, resp, resplen, 0,
-                                (struct sockaddr *)&source, &source_len);
-            if (received < 0) {
-                if (errno == EINTR) {
-                    continue;
-                }
-                close(fd);
-                return -1;
-            }
-
-            if (received >= 2 && source.sin_family == AF_INET &&
-                source.sin_port == destination.sin_port &&
-                source.sin_addr.s_addr == destination.sin_addr.s_addr &&
-                resp[0] == (uint8_t)(id >> 8) && resp[1] == (uint8_t)id) {
-                close(fd);
-                return (int)received;
-            }
+        if (got == WAIT_ERROR) {
+            break;
         }
     }
 
     close(fd);
-    return -1;
+    return result;
 }
 
 int send_and_receive(const char *server_ip, const uint8_t *query, size_t qlen,
