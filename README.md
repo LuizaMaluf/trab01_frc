@@ -7,17 +7,19 @@ Fundamentos de Redes de Computadores — Prof. Tiago Alves — FCTE/UnB
 | Nome | Matrícula |
 |---|---|
 | Luiza Maluf Amorim| 221008294|
-| | |
+| Mateus de Castro Santos| 222015195|
 | | |
 | | |
 
 ## Sistema operacional
 
-TODO
+macOS (arm64), onde foi desenvolvido e testado, e Linux (Debian 12), onde foi verificado e testado também.
 
 ## Ambiente de desenvolvimento
 
-TODO (compilador e versão, editor, ferramentas de teste: dig, Wireshark)
+- Linguagem C (padrão C11) e `make`.
+- Compiladores: Apple clang 21 (macOS) e gcc 13.5 (Linux, em contêiner Docker).
+- Editor: VS Code.
 
 ## Como construir
 
@@ -86,4 +88,9 @@ Nao foi possível coletar entrada MX para unb.br
 
 ## Limitações conhecidas
 
-TODO
+- Apenas IPv4 e apenas UDP: respostas maiores que 512 bytes (flag TC) não são
+  tratadas e resultam em "Nao foi possível coletar entrada MX".
+- Os MX são impressos na ordem recebida, sem ordenar pela preferência.
+- Nome de domínio com ponto final (`unb.br.`) é rejeitado como inválido.
+- Um MX com exchange `.` ("null MX", RFC 7505) é tratado como domínio sem MX.
+- `make integration` depende dos dados DNS publicados no momento do teste.
